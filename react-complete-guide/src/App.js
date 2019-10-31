@@ -12,9 +12,9 @@ import Person from "./Person/Person";
 class App extends Component {
   state = {
     person: [
-      { name: "max", age: 18 },
-      { name: "max1", age: 19 },
-      { name: "max2", age: 20 }
+      { id: "abcd", name: "max", age: 18 },
+      { id: "asfa", name: "max1", age: 19 },
+      { id: "asdfa", name: "max2", age: 20 }
     ],
 
     togglePerson: false
@@ -25,32 +25,48 @@ class App extends Component {
     this.setState({
       togglePerson: !this.state.togglePerson
     })
-  }
-
-  nameChangeHandler = (event) => {
-    this.setState({
-      person: [
-        { name: "max", age: 30 },
-        { name: event.target.value, age: 40 },
-        { name: "max2Change", age: 50 }
-      ]
-    });
-  };
-  // when passing this function into the JSX code below, do not use {this.onClickHandler()}, or this function will exec immediantely
-  // instead, only pass the reference of this function {this.onClickHandler}
-  onClickHandler = input => {
-    // this.state.person[0].name = "maxChange";  do not change state directly, or ReactDOM will not recognize the change
-    // use Component.setState(): this function takes state object as input, and compare the difference, then update the DOM
-    this.setState({
-      person: [
-        { name: input, age: 19 },
-        { name: "max1Change", age: 20 },
-        { name: "max2Change", age: 21 }
-      ]
-    });
   };
 
-  //arrow event handler function can be inefficient sometimes, suggest to use bind syntax
+  nameChangeHandler = (event, id) => {
+    const personIndex = this.state.person.findIndex(p=>{return p.id===id});
+    const newPersonObj = {...this.state.person[personIndex]}; // create a copy of the person object, do not create a reference
+    newPersonObj.name = event.target.value;
+    const newPerson = [...this.state.person];
+    newPerson[personIndex] = newPersonObj;
+    this.setState({person: newPerson});
+
+  };
+
+  deletePersonHandler = (personIndex) =>{
+    // const newPerson = this.state.person; // this creates a reference of the state.person, not a copy
+    // newPerson.splice(personIndex, 1); // this will directly modify the state, it is not a good practice
+
+    // two ways to create a copy of the state element
+    //const newPerson = this.state.person.slice(); // use slice() to create a copy
+    const newPerson = [...this.state.person]; // use spread to create a copy
+    newPerson.splice(personIndex,1);
+    this.setState({person: newPerson});
+  };
+
+/* 
+  when passing this function into the JSX code below, do not use {this.onClickHandler()}, or this function will exec immediantely
+  instead, only pass the reference of this function {this.onClickHandler}
+  this.state.person[0].name = "maxChange";  do not change state directly, or ReactDOM will not recognize the change
+  use Component.setState(): this function takes state object as input, and compare the difference, then update the DOM
+*/
+
+  // onClickHandler = input => {
+    
+  //   this.setState({
+  //     person: [
+  //       { name: input, age: 19 },
+  //       { name: "max1Change", age: 20 },
+  //       { name: "max2Change", age: 21 }
+  //     ]
+  //   });
+  // };
+
+  //if handler need input, arrow event handler function can be inefficient sometimes, suggest to use bind syntax
   render() {
     // React also support inline css style sheet
 
@@ -60,35 +76,35 @@ class App extends Component {
       border: '1px solid blue',
       padding: '8px',
       cursor: 'pointer'
-    }
+    };
 
     /*
      write logic outside of JSX code to make it cleaner
      the render() method is called everytime state changes
+
+     every component should have a unique key prop to help React update the DOM
+     index is not a good key because it is updated each time we delete an element
+     use unique id from the database
     */
-    let person = null;
+    let personComp = null;
     if(this.state.togglePerson){
-      person = (
+      personComp = (
         <div>
-          <Person
-            name={this.state.person[0].name}
-            age={this.state.person[0].age}
-            click={this.onClickHandler.bind(this, "max1ChangeInputText")}
-          >
-           and my hobby is fishing
-          </Person>
-          <Person
-            name={this.state.person[1].name}
-            age={this.state.person[1].age}
-            changed={this.nameChangeHandler}
-          />
-          <Person
-            name={this.state.person[2].name}
-            age={this.state.person[2].age}
-          />
-        </div> 
+          {this.state.person.map((person,index) => {
+            return (
+            <Person 
+            name={person.name} 
+            age={person.age} 
+            click={() => this.deletePersonHandler(index)}
+            changed={(event) => this.nameChangeHandler(event, person.id)}
+            key={person.id}
+            />
+            )
+          })}
+        </div>
       )
     }
+
 
     return (
       <div className="App">
@@ -98,7 +114,7 @@ class App extends Component {
           onClick={this.togglePersonHandler}>
           toggle person
         </button>
-        {person}
+        {personComp}
 
       </div>
     );
