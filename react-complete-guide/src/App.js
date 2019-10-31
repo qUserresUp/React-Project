@@ -15,8 +15,17 @@ class App extends Component {
       { name: "max", age: 18 },
       { name: "max1", age: 19 },
       { name: "max2", age: 20 }
-    ]
+    ],
+
+    togglePerson: false
   };
+
+  togglePersonHandler = () => {
+
+    this.setState({
+      togglePerson: !this.state.togglePerson
+    })
+  }
 
   nameChangeHandler = (event) => {
     this.setState({
@@ -53,30 +62,44 @@ class App extends Component {
       cursor: 'pointer'
     }
 
+    /*
+     write logic outside of JSX code to make it cleaner
+     the render() method is called everytime state changes
+    */
+    let person = null;
+    if(this.state.togglePerson){
+      person = (
+        <div>
+          <Person
+            name={this.state.person[0].name}
+            age={this.state.person[0].age}
+            click={this.onClickHandler.bind(this, "max1ChangeInputText")}
+          >
+           and my hobby is fishing
+          </Person>
+          <Person
+            name={this.state.person[1].name}
+            age={this.state.person[1].age}
+            changed={this.nameChangeHandler}
+          />
+          <Person
+            name={this.state.person[2].name}
+            age={this.state.person[2].age}
+          />
+        </div> 
+      )
+    }
+
     return (
       <div className="App">
-        <h1>Hi, this is da React Project yo</h1>
+        <h1>Hi, this is da React Project</h1>
         <p>This is a paragraph!!</p>
         <button style={stylesheet}
-          onClick={() => this.onClickHandler("max1ChangeInputButton")}>
-          switch names
+          onClick={this.togglePersonHandler}>
+          toggle person
         </button>
-        <Person
-          name={this.state.person[0].name}
-          age={this.state.person[0].age}
-          click={this.onClickHandler.bind(this, "max1ChangeInputText")}
-        >
-          and my hobby is fishing
-        </Person>
-        <Person
-          name={this.state.person[1].name}
-          age={this.state.person[1].age}
-          changed={this.nameChangeHandler}
-        />
-        <Person
-          name={this.state.person[2].name}
-          age={this.state.person[2].age}
-        />
+        {person}
+
       </div>
     );
   }
