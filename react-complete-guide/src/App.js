@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Radium,  {StyleRoot} from 'radium';
 import "./App.css";
 import Person from "./Person/Person";
 /*
@@ -71,11 +72,17 @@ class App extends Component {
     // React also support inline css style sheet
 
     const stylesheet = {
-      backgroundColor: 'yellow',
+      backgroundColor: 'green',
       font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      color: 'white',
+      // installed radium package to use peudo hover style in our inline style
+      ":hover": {
+        backgroundColor:'lightgreen',
+        color:'black' 
+      }
     };
 
     /*
@@ -103,13 +110,22 @@ class App extends Component {
           })}
         </div>
       )
+      stylesheet.backgroundColor = 'red';
+      stylesheet.color = 'white';
+      stylesheet[':hover'] = {backgroundColor: 'salmon', color: 'black'};
     }
 
+    // use a string of css class names to pass more than one stylsheet into an element
+    const classArr = [];
+    if(this.state.person.length <= 2){ classArr.push("red"); }
+    if(this.state.person.length <= 1){ classArr.push("bold"); }
 
+    //wrap everything in a <StyleRoot> in order to use advanced radium features like @media
     return (
-      <div className="App">
+      <StyleRoot>
+      <div className={'App'}>
         <h1>Hi, this is da React Project</h1>
-        <p>This is a paragraph!!</p>
+        <p className={classArr.join(' ')}>I can change color and font</p>
         <button style={stylesheet}
           onClick={this.togglePersonHandler}>
           toggle person
@@ -117,8 +133,10 @@ class App extends Component {
         {personComp}
 
       </div>
+      </StyleRoot>
     );
   }
 }
 
-export default App;
+// wrap our App with higher order component Radium
+export default Radium(App);
