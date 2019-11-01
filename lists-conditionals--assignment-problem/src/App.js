@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Text from './Text/Text'
 import CharComponent from './CharComponent/CharComponent'
+import ImagePreview from './ImagePreview/ImagePreview'
 
 class App extends Component {
 
@@ -42,7 +43,7 @@ class App extends Component {
         <input type="text" onChange={this.changeHandler} value={this.state.input}/>
         <Text input={this.state.input}/>
         {charBoxes}
-
+        <ImagePreview />
       </div>
     );
   }
