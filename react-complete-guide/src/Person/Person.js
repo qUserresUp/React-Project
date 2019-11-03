@@ -1,20 +1,18 @@
 import React from "react";
 import { Component } from "react";
-import Radium from 'radium';
 
-
+import styles from './Person.module.css' // import modular css file, this style is scoped to this component only
 import './Person.css' // import the css file in order to tell Webpack to inject the css styling into the HTML file
 
 // one function can only return one parent element
 // props.children will get the value between open tag and closing tag
 const person = props => {
-  const style={
-    '@media (min-width:500px)' : {
-      width: '450px'
-    }
-  }
+  
+  const rnd = Math.random();
+  if(rnd > 0.7){ throw new Error('something is wrong'); }
+
   return (
-    <div className="Person" style={style}>
+    <div className={styles.Person}>
       <p onClick={props.click}>
         My name is {props.name}, and I am {props.age} years old.{" "}
       </p>
@@ -35,4 +33,4 @@ const person = props => {
 //     );
 //   }
 // }
-export default Radium(person);
+export default person;
