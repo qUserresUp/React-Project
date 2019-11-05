@@ -2,8 +2,10 @@ import React, { Component } from "react";
 // import Radium,  {StyleRoot} from 'radium';
 //import "./App.css";
 import styles from './App.module.css';
-import Person from "./Person/Person";
-import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
+import Persons from "../Components/Persons/Persons";
+import Cockpit from '../Components/Cockpit/Cockpit';
+
+// import ErrorBoundary from '../Components/ErrorBoundary/ErrorBoundary'
 
 /*
   Now, functional components can also have state using React Hooks
@@ -14,6 +16,7 @@ import ErrorBoundary from './ErrorBoundary/ErrorBoundary'
   
 */
 class App extends Component {
+
   state = {
     person: [
       { id: "abcd", name: "max", age: 18 },
@@ -23,6 +26,47 @@ class App extends Component {
 
     togglePerson: false
   };
+
+/*====================================================
+  Creation LifeCycles:
+    constructor()
+    getDerivedStateFromProps()
+    render()
+    componentDidMount() => send HTTP requests or timeouts in this step to avoid side-effects
+====================================================*/
+
+static getDerivedStateFromProps(props, state){
+  console.log('[App.js] getDerivedStateFromProps', props);
+  return state;
+}
+
+componentDidMount(){
+  console.log('[App.js] componentDidMount');
+}
+
+/*====================================================
+  Update LifeCycles:
+    getDerivedStateFromProps()
+    shouldComponentUpdate(nextProps, nextState)
+    render()
+    Update Child Component Props
+    getSnapshotBeforeupdate(prevProps,prevState)
+    componentDidUpdate()
+====================================================*/
+
+  shouldComponentUpdate(nextProps, nextState){
+    console.log('[App.js] shouldComponentUpdate');
+    return true; 
+  }
+
+  componentDidUpdate(){
+    console.log('[App.js] componentDidUpdate');
+  }
+
+
+/*====================================================
+  Handlers
+====================================================*/
 
   togglePersonHandler = () => {
 
@@ -52,6 +96,8 @@ class App extends Component {
     this.setState({person: newPerson});
   };
 
+
+
 /* 
   when passing this function into the JSX code below, do not use {this.onClickHandler()}, or this function will exec immediantely
   instead, only pass the reference of this function {this.onClickHandler}
@@ -71,6 +117,11 @@ class App extends Component {
   // };
 
   //if handler need input, arrow event handler function can be inefficient sometimes, suggest to use bind syntax
+
+  /*====================================================
+    render
+  ====================================================*/
+
   render() {
     // React also support inline css style sheet
 
@@ -98,47 +149,31 @@ class App extends Component {
      index is not a good key because it is updated each time we delete an element
      use unique id from the database
     */
+    
+    console.log('[App.js] is rendering');
+
     let personComp = null;
-    let btnClass = '';
     if(this.state.togglePerson){
       personComp = (
         <div>
-          {this.state.person.map((person,index) => {
-            return (
-            <ErrorBoundary>
-            <Person 
-            name={person.name} 
-            age={person.age} 
-            click={() => this.deletePersonHandler(index)}
-            changed={(event) => this.nameChangeHandler(event, person.id)}
-            key={person.id}
-            />
-            </ErrorBoundary>
-            )
-          })}
+          <Persons
+          persons={this.state.person}
+          click={this.deletePersonHandler} 
+          changed={this.nameChangeHandler}/>
         </div>
       )
-      btnClass = styles.red;
-
     }
 
-    // use a string of css class names to pass more than one stylsheet into an element
-    const classArr = [];
-    if(this.state.person.length <= 2){ classArr.push(styles.red); }
-    if(this.state.person.length <= 1){ classArr.push(styles.bold); }
-
+    
     //wrap everything in a <StyleRoot> in order to use advanced radium features like @media
     return (
-      
       <div className={styles.App}>
-        <h1>Hi, this is da React Project</h1>
-        <p className={classArr.join(' ')}>I can change color and font</p>
-        <button className={btnClass}
-          onClick={this.togglePersonHandler}>
-          toggle person
-        </button>
-        {personComp}
-
+      <Cockpit 
+        personLength={this.state.person.length}
+        togglePerson={this.state.togglePerson}
+        clicked={this.togglePersonHandler}
+      />
+      {personComp}
       </div>
     );
   }
