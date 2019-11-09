@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import styles from './Person.module.css' // import modular css file, this style is scoped to this component only
 import './Person.css' // import the css file in order to tell Webpack to inject the css styling into the HTML file
+import withClass from '../../../hoc/withClass';
+import PropTypes from 'prop-types';
 
 // one function can only return one parent element
 // props.children will get the value between open tag and closing tag
@@ -25,6 +27,16 @@ const Person = props => {
 //Components can be implemented with Function or Class. In class, use this.props to get the input value
 class Person extends Component {
 
+  constructor(props){
+    super(props)
+    this.inputElRef = React.createRef();
+
+  }
+  componentDidMount(){
+    // this.inputEl.focus();
+    this.inputElRef.current.focus();
+  }
+
   render() {
 
     console.log('[Person.js] is rendering');
@@ -33,10 +45,29 @@ class Person extends Component {
       <p onClick={this.props.click}>
         My name is {this.props.name}, and I am {this.props.age} years old.{" "}
       </p>
-      <p>{this.props.children}</p>
-      <input type="text" onChange={this.props.changed} value={this.props.name} />
+      <input 
+      type="text" 
+      onChange={this.props.changed} 
+      value={this.props.name} 
+      // ref={(inputRef)=>{this.inputEl = inputRef}} // use ref - method1: use inline function to get reference to the element
+      ref={this.inputElRef} // use ref - method2: use constructor + React.createRef() + this.inputElRef.current.focus()
+      />
     </div>    
     );
   }
+}
+
+/*
+  use 'prop-types' package to help define the type of props
+  Install: npm install --save prop-types
+  This is very helpful when distributing my component to a project or team, help other to use this component correctly
+  When incorrect props is passed to this component, then a warning will be cast to the console
+ */
+Person.propTypes={
+  click: PropTypes.func,
+  name: PropTypes.string,
+  age: PropTypes.number,
+  changed: PropTypes.func,
+  
 }
 export default Person;

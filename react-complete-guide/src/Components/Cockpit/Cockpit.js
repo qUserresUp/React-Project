@@ -1,8 +1,9 @@
-import React, {useEffect} from 'react'; // useEffect lifecycle hook
+import React, {useEffect, useRef} from 'react'; // useEffect lifecycle hook
 import styles from './Cockpit.module.css';
 
 const Cockpit =(props)=>{
 
+    const togglebtnRef = React.useRef(null);
     /* 
         useEffect is the lifecycle hook for functional component 
         and is a combination of componentDidMount() + componentDidUpdate() + componentWillUnmount()
@@ -12,7 +13,8 @@ const Cockpit =(props)=>{
     */
     useEffect(()=>{
         console.log('[Cockpit.js] useEffect');
-        setTimeout(()=>{alert('Saved data to cloud');}, 1000);
+        // setTimeout(()=>{alert('Saved data to cloud');}, 1000);
+        togglebtnRef.current.click();
         return ()=>{ console.log('this will be executed when this component is unmounted, clean up work can happen here'); } // this returned function will executed when the component is unmounted
     },[]);
 
@@ -22,8 +24,8 @@ const Cockpit =(props)=>{
     */
     useEffect(()=>{
         console.log('[Cockpit.js] 2nd useEffect');
-        setTimeout(()=>{alert('Saved data to cloud');}, 1000);
-        return ()=>{ console.log('[Cockpit.js] 2nd useEffect cleanup work'); } // this returned function will executed when the component is unmounted
+        // setTimeout(()=>{alert('Saved data to cloud2');}, 1000);
+        return ()=>{ console.log('[Cockpit.js] 2nd useEffect cleanup work'); } 
     });
     
     const classArr = [];     // use a string of css class names to pass more than one stylsheet into an element
@@ -37,7 +39,9 @@ const Cockpit =(props)=>{
         <div className={styles.Cockpit}>
             <h1>Hi, this is da React Project</h1>
             <p className={classArr.join(' ')}>I can change color and font</p>
-            <button className={btnClass}
+            <button 
+                ref={togglebtnRef}
+                className={btnClass}
                 onClick={props.clicked}>
                 toggle person
              </button>

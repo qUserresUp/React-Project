@@ -42,9 +42,9 @@ class Persons extends Component{
         return false;
     }
     
-    getSnapshotBeforeUpdate(){
-        console.log('[Persons.js] getSnapshotBeforeUpdate');
-    }
+    // getSnapshotBeforeUpdate(){
+    //     console.log('[Persons.js] getSnapshotBeforeUpdate');
+    // }
 
     // fetch data from server should happen here
     componentDidUpdate(){

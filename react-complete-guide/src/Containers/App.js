@@ -4,6 +4,9 @@ import React, { Component } from "react";
 import styles from './App.module.css';
 import Persons from "../Components/Persons/Persons";
 import Cockpit from '../Components/Cockpit/Cockpit';
+import Aux from '../hoc/Aux';
+import withClass from '../hoc/withClass';
+import { thisTypeAnnotation } from "@babel/types";
 
 // import ErrorBoundary from '../Components/ErrorBoundary/ErrorBoundary'
 
@@ -24,7 +27,8 @@ class App extends Component {
       { id: "asdfa", name: "max2", age: 20 }
     ],
 
-    togglePerson: false
+    togglePerson: false,
+    changeCounter: 0
   };
 
 /*====================================================
@@ -82,6 +86,9 @@ componentDidMount(){
     const newPerson = [...this.state.person];
     newPerson[personIndex] = newPersonObj;
     this.setState({person: newPerson});
+
+    //this.setState({changeCounter: this.state.changeCounter+1}); // **Very Important**: setState is called asynchronously, therefore it is not guaranteed that this.state is the previous state
+    this.setState((prevState, props)=>{ return {changeCounter: prevState.changeCounter+1}}) // pass a function to setState(), the first parameter will be previous state, this way it is guaranteed to use previous state
 
   };
 
@@ -159,7 +166,8 @@ componentDidMount(){
           <Persons
           persons={this.state.person}
           click={this.deletePersonHandler} 
-          changed={this.nameChangeHandler}/>
+          changed={this.nameChangeHandler}
+          />
         </div>
       )
     }
@@ -167,17 +175,17 @@ componentDidMount(){
     
     //wrap everything in a <StyleRoot> in order to use advanced radium features like @media
     return (
-      <div className={styles.App}>
+      <Aux>
       <Cockpit 
         personLength={this.state.person.length}
         togglePerson={this.state.togglePerson}
         clicked={this.togglePersonHandler}
       />
       {personComp}
-      </div>
+      </Aux>
     );
   }
 }
 
 // wrap our App with higher order component Radium
-export default App;
+export default withClass(App,styles.App);
