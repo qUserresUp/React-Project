@@ -7,6 +7,7 @@ import Cockpit from '../Components/Cockpit/Cockpit';
 import Aux from '../hoc/Aux';
 import withClass from '../hoc/withClass';
 import { thisTypeAnnotation } from "@babel/types";
+import AuthContext from '../context/Context';
 
 // import ErrorBoundary from '../Components/ErrorBoundary/ErrorBoundary'
 
@@ -28,7 +29,8 @@ class App extends Component {
     ],
 
     togglePerson: false,
-    changeCounter: 0
+    changeCounter: 0,
+    isAuthenticated: false
   };
 
 /*====================================================
@@ -103,6 +105,9 @@ componentDidMount(){
     this.setState({person: newPerson});
   };
 
+  loginHandler = () =>{
+    this.setState({isAuthenticated: true})
+  }
 
 
 /* 
@@ -167,6 +172,7 @@ componentDidMount(){
           persons={this.state.person}
           click={this.deletePersonHandler} 
           changed={this.nameChangeHandler}
+          auth={this.state.isAuthenticated}
           />
         </div>
       )
@@ -175,14 +181,14 @@ componentDidMount(){
     
     //wrap everything in a <StyleRoot> in order to use advanced radium features like @media
     return (
-      <Aux>
+      <AuthContext.Provider value={{authenticated: this.state.isAuthenticated, login:this.loginHandler}}>
       <Cockpit 
         personLength={this.state.person.length}
         togglePerson={this.state.togglePerson}
         clicked={this.togglePersonHandler}
       />
       {personComp}
-      </Aux>
+      </AuthContext.Provider>
     );
   }
 }

@@ -1,9 +1,12 @@
-import React, {useEffect, useRef} from 'react'; // useEffect lifecycle hook
+import React, {useEffect, useRef, useContext} from 'react'; // useEffect lifecycle hook, useContext hook allow you to access context in functional based components
 import styles from './Cockpit.module.css';
+import AuthContext from '../../context/Context';
+import { isContext } from 'vm';
 
 const Cockpit =(props)=>{
 
-    const togglebtnRef = React.useRef(null);
+    const togglebtnRef = useRef(null); // functional based components use React.useRef() to create reference
+    const authContext = useContext(AuthContext);
     /* 
         useEffect is the lifecycle hook for functional component 
         and is a combination of componentDidMount() + componentDidUpdate() + componentWillUnmount()
@@ -45,10 +48,12 @@ const Cockpit =(props)=>{
                 onClick={props.clicked}>
                 toggle person
              </button>
+             <button onClick={authContext.login}>Login</button>
+            
         </div>
     )
-}
 
+}
 /*
     React.memo is similar to shouldComponentUpdate() in class based component, 
     if this component does not change, then it will not be updated

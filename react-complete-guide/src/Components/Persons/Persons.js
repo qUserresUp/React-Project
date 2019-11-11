@@ -38,8 +38,9 @@ class Persons extends Component{
 
     shouldComponentUpdate(nextProps, nextState){ // use this function to prevent needless re-rendering
         console.log('[Persons.js] shouldComponentUpdate');
-        if(nextProps.persons !== this.props.persons){ return true; } // if the prop does not change, then we do not need to re-render this component
-        return false;
+        //if(nextProps.persons !== this.props.persons){ return true; } // if the prop does not change, then we do not need to re-render this component
+        //return false;
+        return true;
     }
     
     // getSnapshotBeforeUpdate(){
@@ -67,6 +68,7 @@ class Persons extends Component{
             click={() => this.props.click(index)}
             changed={(event) => this.props.changed(event, person.id)}
             key={person.id}
+            isauth={this.props.auth}
             />
             )
           })

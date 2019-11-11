@@ -3,6 +3,7 @@ import styles from './Person.module.css' // import modular css file, this style 
 import './Person.css' // import the css file in order to tell Webpack to inject the css styling into the HTML file
 import withClass from '../../../hoc/withClass';
 import PropTypes from 'prop-types';
+import AuthContext from '../../../context/Context';
 
 // one function can only return one parent element
 // props.children will get the value between open tag and closing tag
@@ -29,10 +30,12 @@ class Person extends Component {
 
   constructor(props){
     super(props)
-    this.inputElRef = React.createRef();
-
+    this.inputElRef = React.createRef(); //use ref - method 2: class based component use createRef() to create reference
   }
-  componentDidMount(){
+
+  static contextType = AuthContext;
+
+  componentDidMount(){  
     // this.inputEl.focus();
     this.inputElRef.current.focus();
   }
@@ -41,7 +44,10 @@ class Person extends Component {
 
     console.log('[Person.js] is rendering');
     return (
+
     <div className={styles.Person}>
+
+      {this.context.authenticated ? <p>is Authenticated</p> : <p>Please Login</p>}
       <p onClick={this.props.click}>
         My name is {this.props.name}, and I am {this.props.age} years old.{" "}
       </p>
