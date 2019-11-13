@@ -64,7 +64,7 @@ class Person extends Component {
 }
 
 /*
-  use 'prop-types' package to help define the type of props
+  use 'prop-types' package to help define the type of props (class-based component)
   Install: npm install --save prop-types
   This is very helpful when distributing my component to a project or team, help other to use this component correctly
   When incorrect props is passed to this component, then a warning will be cast to the console
