@@ -10,10 +10,9 @@ const sideDrawer =(props)=>{
     let sdStyle = props.showBackDrop ? 
             [styles.SideDrawer, styles.Open]:[styles.SideDrawer, styles.Close]
 
-    console.log(sdStyle)
     return (
         <Aux>
-            <Backdrop show={props.showBackDrop} clicked={props.closeBackDropHandle}/>
+            <Backdrop show={props.showBackDrop} clicked={props.closeBackDropHandle} close={true}/>
             <div className={sdStyle.join(' ')}>
                 <div className={styles.Logo}>
                     <Logo />

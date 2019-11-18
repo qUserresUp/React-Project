@@ -17,4 +17,7 @@ const modal = (props) =>(
     </Aux>
 )
 
-export default modal;
+// use React.memo() in functional components, its similar to shouldComponentUpdate() in class based components
+// however when preState equals nextState, shouldComponentUpdate() returns false, memo() returns true
+// when modal is not shown, then we do not update the wrapped orderSummary
+export default React.memo(modal, (preProps, nextProps)=>{ return preProps.show === nextProps.show});

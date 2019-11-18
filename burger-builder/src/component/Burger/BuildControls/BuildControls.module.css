@@ -49,3 +49,12 @@
         transform: scale(1);
     }
 }
+
+.ClearButton {
+    background-color: #966909;
+    margin: 10px;
+}
+
+.ClearButton:active {
+    animation: enable 0.3s linear;
+}
