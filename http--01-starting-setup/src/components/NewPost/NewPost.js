@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import './NewPost.css';
+import axios from 'axios';
 
 class NewPost extends Component {
     state = {
@@ -9,12 +10,30 @@ class NewPost extends Component {
         author: 'Max'
     }
 
+    // send post request
+    postRequestHandler = () =>{
+        let post = { ...this.state };
+        axios.post('/posts',post) // send post request to the dummy server
+            .then((response)=>{
+                console.log(response);
+            })
+    }
+
+
+    postDeleteHandler = () =>{
+        let post = { ...this.state };
+        axios.delete('/posts',post) // send post delete request to the dummy server
+            .then((response)=>{
+                console.log(response);
+            })
+    }
+
     render () {
         return (
             <div className="NewPost">
                 <h1>Add a Post</h1>
                 <label>Title</label>
-                <input type="text" value={this.state.title} onChange={(event) => this.setState({title: event.target.value})} />
+                <input type="text" value={this.state.title} onChange={(event) => {this.setState({title: event.target.value})}} />
                 <label>Content</label>
                 <textarea rows="4" value={this.state.content} onChange={(event) => this.setState({content: event.target.value})} />
                 <label>Author</label>
@@ -22,7 +41,7 @@ class NewPost extends Component {
                     <option value="Max">Max</option>
                     <option value="Manu">Manu</option>
                 </select>
-                <button>Add Post</button>
+                <button onClick={this.postRequestHandler}>Add Post</button>
             </div>
         );
     }

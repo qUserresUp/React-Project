@@ -9,11 +9,14 @@ import './Blog.css';
 class Blog extends Component {
 
     state = {
-        posts: []
+        posts: [],
+        selectedPostId: null,
+        error: false
     }
+
     componentDidMount (){
         // because javascript execute code asynchronously, use then() promise function to make sure the data if fetched and stored
-        axios.get('https://jsonplaceholder.typicode.com/posts')
+        axios.get('/posts')
             .then((response) => {
                     let updateData = response.data.slice(0,4);
                     updateData = updateData.map((eachData)=>{
@@ -26,20 +29,37 @@ class Blog extends Component {
                     
                 }
             )
+            // use catch() to catch errors
+            .catch((error)=>{
+                this.setState({error: true});
+            })
+    }
+
+    selectPostHandler = (id) => {
+        this.setState({selectedPostId: id});
     }
 
     render () {
 
-        const posts = this.state.posts.map((post)=>(
-            <Post key={post.id} title={post.title} author={post.author}/>
-        ))
+        let posts = <p style={{textAlign:'center'}}>Wrong Requests</p>
+        if(!this.state.error){
+            posts = this.state.posts.map((post)=>(
+                <Post 
+                    key={post.id} 
+                    title={post.title} 
+                    author={post.author} 
+                    clicked={()=>this.selectPostHandler(post.id)}
+                />
+            ))
+        }
+        
         return (
             <div>
                 <section className="Posts">
                     {posts}
                 </section>
                 <section>
-                    <FullPost />
+                    <FullPost selectedPostId={this.state.selectedPostId}/>
                 </section>
                 <section>
                     <NewPost />
