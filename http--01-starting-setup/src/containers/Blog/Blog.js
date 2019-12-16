@@ -1,69 +1,61 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-
-import Post from '../../components/Post/Post';
-import FullPost from '../../components/FullPost/FullPost';
-import NewPost from '../../components/NewPost/NewPost';
+import Posts from '../Posts/Posts';
+import NewPost from '../NewPost/NewPost';
+import {Route, Link, NavLink, Switch, Redirect} from 'react-router-dom'; 
 import './Blog.css';
 
 class Blog extends Component {
 
-    state = {
-        posts: [],
-        selectedPostId: null,
-        error: false
-    }
-
-    componentDidMount (){
-        // because javascript execute code asynchronously, use then() promise function to make sure the data if fetched and stored
-        axios.get('/posts')
-            .then((response) => {
-                    let updateData = response.data.slice(0,4);
-                    updateData = updateData.map((eachData)=>{
-                        return {
-                            ...eachData,
-                            author: "Max"
-                        }
-                    })
-                    this.setState({posts: updateData});
-                    
-                }
-            )
-            // use catch() to catch errors
-            .catch((error)=>{
-                this.setState({error: true});
-            })
-    }
-
-    selectPostHandler = (id) => {
-        this.setState({selectedPostId: id});
-    }
-
     render () {
 
-        let posts = <p style={{textAlign:'center'}}>Wrong Requests</p>
-        if(!this.state.error){
-            posts = this.state.posts.map((post)=>(
-                <Post 
-                    key={post.id} 
-                    title={post.title} 
-                    author={post.author} 
-                    clicked={()=>this.selectPostHandler(post.id)}
-                />
-            ))
-        }
-        
         return (
-            <div>
-                <section className="Posts">
-                    {posts}
-                </section>
-                <section>
-                    <FullPost selectedPostId={this.state.selectedPostId}/>
-                </section>
-                <section>
-                    <NewPost />
-                </section>
+            <div className="Blog">
+                <header>
+                    <nav>
+                        <ul>
+                            {/* 
+                                use Link component from react-router-dom instead of <a> tag to prevent 
+                                website from sending new request to server and reloading itself
+                                leading to loss of state
+
+                                <Link /> component 'to' attribute is ab absolute path, not a relative path
+                                use props.this.match.url + '/newPost' to use relative path
+
+                                NavLink is similar to Link, but you can apply styling to NavLink
+                                use activeClassName or activeStyle attributes to add styling
+
+                            */}
+                            <li><NavLink to="/posts" 
+                            exact
+                            activeClassName="my-active"
+                            activeStyle={{
+                                color: '#fa923f',
+                                textDecoration: 'underline',
+                            }}
+                            >Home</NavLink></li>
+                            <li><NavLink to={{
+                                pathname: '/newPost',
+                                hash:'#submit',
+                                search: '?quick-submit=true',
+
+                            }}>New Post</NavLink></li>
+                        </ul>
+                    </nav>
+                </header>
+                {/* use exact to specify wether the path is exact or not*/}
+                {/* 
+                    use render attribute to render small content quickly
+                    <Route path='/' exact render={()=><p>random text</p>} /> 
+                    
+                    use component attribute to render components
+                    use switch component from 'react-router-dom' to render the first matched route
+                */}
+                <Switch>
+                    <Route path='/newPost' component={NewPost} />
+                    <Route path='/posts'  component={Posts} />
+                    <Redirect from='/' to='/posts' />
+                </Switch>
+
             </div>
         );
     }
