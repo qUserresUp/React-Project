@@ -16,6 +16,8 @@ class NewPost extends Component {
         axios.post('/posts',post) // send post request to the dummy server
             .then((response)=>{
                 console.log(response);
+                this.props.history.replace('/'); // replace() replace current page with specified page without adding current page to history
+                //this.props.history.push('/'); // push() push the specified page to the top of history stack
             })
     }
 
