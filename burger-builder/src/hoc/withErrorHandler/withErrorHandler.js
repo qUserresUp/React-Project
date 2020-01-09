@@ -6,6 +6,7 @@ import Modal from '../../component/Modal/Modal';
      global error handler, a higher order component
      uses axios.interceptors to listent to any network errors
 */
+
 const withErrorHandler = (WrappedComponent, axios) => {
     return (
         class extends Component {

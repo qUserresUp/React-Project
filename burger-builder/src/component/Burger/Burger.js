@@ -1,12 +1,13 @@
 import React from 'react';
 import styles from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
-
+import {withRouter} from 'react-router-dom'; // withRouter is a hoc that gives wrapped components the access to router props
 
 const burger = (props) =>{
 
     // let tmpArr = new Array(5) this creates an array of size 5, but because no value is assigned, tmpArr has a length of 0
-    // In order to create an array of size 5, do this => let tmpArr = new Array(5).fill(0); 
+    // In order to create an array of size 5, do this => let tmpArr = new Array(5).fill(0);
+    console.log(props.ingredients);
     let transformedIngredients = Object.keys(props.ingredients)
             .map(igKey => {
                 return [...Array(props.ingredients[igKey])].map((_,i)=>

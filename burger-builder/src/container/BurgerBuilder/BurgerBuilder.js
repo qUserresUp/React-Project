@@ -99,29 +99,17 @@ class BurgerBuilder extends Component{
         // alert('continue order!')
         // in real applications, its ideal to calculate the total price on server-side, prevent user from manipulating data
 
-        this.setState({loading: true}); // when continue is clicked, then we want to show the spinner
-
-        const order = {
-            ingredient: this.state.ingredients,
-            price: this.state.totalPrice,
-            customer: {
-                name: 'max',
-                address: 'street1',
-                phone: '12345',
-                creditCard: '123'
-            }
+        const queryParams = [];
+        for(let i in this.state.ingredients){
+            queryParams.push(encodeURIComponent(i)+ '=' + encodeURIComponent(this.state.ingredients[i]))
         }
+        queryParams.push('price=' + this.state.totalPrice);
+        const queryString = queryParams.join('&');
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString,
+        });
 
-        axios.post('/orders.json', order)
-            .then(response => {
-                console.log(response);
-                this.setState({loading: false, purchasing: false}); // after receiving response from server, we want to close modal and spinner
-
-            })
-            .catch(error=> {
-                console.log(error);
-                this.setState({loading: false, purchasing: false});
-            });
         
     }
 
