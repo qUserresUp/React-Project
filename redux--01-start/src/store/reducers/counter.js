@@ -1,8 +1,12 @@
-import * as actionTypes from './actions';
+import * as actionTypes from '../actions';
+
+/* 
+    when combining two reducers, each reducer does not have access to the global state, 
+    it only have access to its own state, although they are merged into one reducer at the end
+*/
 
 const initialState = {
     counter: 0,
-    result: [],
 }
 
 const reducer = (state = initialState, action) => {
@@ -28,17 +32,6 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 counter: state.counter - action.value
-            }
-        case actionTypes.STORE_RESULT:
-            return {
-                ...state,
-                result: state.result.concat({id: new Date(), value:state.counter}) // concat() returns a new list, so this does not mutate the state directly
-            }
-        case actionTypes.DELETE_RESULT:
-            let updatedArray = state.result.filter(el => el.id !== action.deleteElID)
-            return {
-                ...state,
-                result: updatedArray,
             }
     }
 
