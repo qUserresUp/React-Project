@@ -4,6 +4,7 @@ import styles from './ContactData.module.css';
 import axios from '../../../axios-order';
 import Spinner from '../../../component/UI/Spinner/Spinner';
 import Input from '../../../component/UI/Input/Input';
+import { connect } from 'react-redux';
 
 class ContactData extends Component {
 
@@ -16,6 +17,12 @@ class ContactData extends Component {
                     placeholder: 'Your Name'
                 },
                 value: '',
+                validation: {
+                    required: true,
+
+                },
+                valid: false,
+                touched: false,
             },
 
             street: {
@@ -25,6 +32,12 @@ class ContactData extends Component {
                     placeholder: 'Your Street'
                 },
                 value: '',
+                validation: {
+                    required: true,
+                    
+                },
+                valid: false,
+                touched: false,
             },
 
             zipcode: {
@@ -34,6 +47,13 @@ class ContactData extends Component {
                     placeholder: 'Your Zip Code'
                 },
                 value: '',
+                validation: {
+                    required: true,
+                    minLength: 5,
+                    maxLength: 5,
+                },
+                valid: false,
+                touched: false,
             },
 
             country: {
@@ -43,6 +63,12 @@ class ContactData extends Component {
                     placeholder: 'Your Country'
                 },
                 value: '',
+                validation: {
+                    required: true,
+                    
+                },
+                valid: false,
+                touched: false,
             },
 
             email:{
@@ -52,6 +78,12 @@ class ContactData extends Component {
                     placeholder: 'Your Email'
                 },
                 value: '',
+                validation: {
+                    required: true,
+                    
+                },
+                valid: false,
+                touched: false,
             },
 
             deliveryMethod: {
@@ -62,22 +94,28 @@ class ContactData extends Component {
                         {value: 'cheapest', display: 'Cheapest'},
                     ]
                 },
-                value: '',
+                value: 'fastest',
+                valid: true,
             },
         },
         
         loading: false,
+        formIsValid: false,
     }
 
-    orderHandler = () => {
-        console.log(this.props.ingredients);
+    orderHandler = ( event ) => {
 
+        event.preventDefault();
         this.setState({loading: true}); // when continue is clicked, then we want to show the spinner
 
+        const formData = {};
+        for(let formElementID in this.state.orderForm){
+            formData[formElementID] = this.state.orderForm[formElementID].value;
+        }
         const order = {
-            ingredient: this.props.ingredients,
-            price: this.props.totalPrice, 
-            
+            ingredient: this.props.ings,
+            price: this.props.price, 
+            orderData: formData,
         }
 
         axios.post('/orders.json', order)
@@ -92,12 +130,46 @@ class ContactData extends Component {
             });
     }
 
+    checkValidity(value, rules) {
+        let isValid = true;
+        if(!rules){ return isValid};
+        if(rules.required) {
+            isValid = value.trim() !== '' && isValid;
+        }
+
+        if(rules.minLength){
+            isValid = (value.length >= rules.minLength) && isValid;
+        }
+
+        if(rules.maxLength){
+            isValid = (value.length <= rules.maxLength) && isValid
+        }
+
+        if(rules.isEmail) {
+            isValid = isValid && (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value))
+        }
+
+        if(rules.isNumeric) {
+            const pattern = /^\d+$/;
+            isValid = pattern.test(value) && isValid;
+        }
+
+        return isValid;
+    }
+
     formInputChangeHandler = (event, inputIdentifier) =>{
         const updatedForm = {...this.state.orderForm}; // Be careful, '...' spread operator does not perform deep copy on nested objects
         const updatedElement = {...updatedForm[inputIdentifier]}; // therefore, we need to make a copy for the nested object again
         updatedElement.value = event.target.value;
+        updatedElement.valid = this.checkValidity(updatedElement.value, updatedElement.validation);
+        updatedElement.touched = true;
         updatedForm[inputIdentifier] = updatedElement;
-        this.setState({orderForm: updatedForm});
+
+        let formIsValid = true;
+        for(let inputId in updatedForm) {
+            formIsValid = updatedForm[inputId].valid && formIsValid
+        }
+        this.setState({orderForm: updatedForm, formIsValid: formIsValid});
     }
     render(){
 
@@ -113,7 +185,7 @@ class ContactData extends Component {
         
         if(!this.state.loading){
             contactform = (
-                <form>
+                <form onSubmit={this.orderHandler}>
                     {formElementArray.map(formElement => (
                     <Input 
                         key={formElement.id}
@@ -121,9 +193,10 @@ class ContactData extends Component {
                         elementConfig={formElement.config.elementConfig}
                         value={formElement.config.value}
                         onChange={(event) => this.formInputChangeHandler(event,formElement.id)}
+                        invalid={!formElement.config.valid && formElement.config.touched}
                     />
                     ))}
-                    <Button btnType='Success' clicked={this.orderHandler}>ORDER</Button>
+                    <Button btnType='Success' disabled={!this.state.formIsValid}>ORDER</Button>
                 </form>
             )
         }
@@ -137,4 +210,11 @@ class ContactData extends Component {
     }
 }
 
-export default ContactData;
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients,
+        price: state.totalPrice,
+    }
+}
+
+export default connect(mapStateToProps)(ContactData);

@@ -3,9 +3,14 @@ import styles from './Button.module.css';
 
 // className should receive a string of css classes seperated by space
 const button =(props)=>{
+
+    let classes = [styles.Button,styles[props.btnType]];
+   
     return (<button 
-            className={[styles.Button,styles[props.btnType]].join(' ')}
-            onClick={props.clicked}>
+            className={classes.join(' ')}
+            onClick={props.clicked}
+            disabled={props.disabled}
+            >
                 {props.children}
             </button>)
 }

@@ -18,6 +18,8 @@ const order =(props)=> {
                     margin: '0 8px',
                     border: '1px solid #ccc',
                     padding: '5px',
+                    backgroundColor: 'orange',
+                    borderColor: '#703B09',
                 }}
                 key={ingPair.name}>
                 {ingPair.name} ({ingPair.amount})
